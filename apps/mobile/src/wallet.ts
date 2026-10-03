@@ -3,7 +3,7 @@ import { Transaction } from '@solana/web3.js';
 import bs58 from 'bs58';
 import { prepareDemoCreation } from './demoAsset';
 import { connection, verifyNetwork } from './payments';
-import { transact } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import { withWallet } from './walletTransport';
 import { config, devnetUsdc } from './config';
 import type { Asset } from './assets';
 import type { PendingPayment } from './payments';
@@ -11,7 +11,7 @@ import { authorizedAddress, signDemoCreation, signAssetTransfer, submitSignedPay
 export type { WalletSession } from './signing';
 
 export async function connectWallet(): Promise<WalletSession> {
-  return transact(async (wallet) => {
+  return withWallet(async (wallet) => {
     const result = await wallet.authorize({ chain: config.chain, identity: config.identity });
     const account = result.accounts[0];
     if (!account) throw new Error('The wallet returned no account.');
@@ -20,7 +20,7 @@ export async function connectWallet(): Promise<WalletSession> {
 }
 
 export async function disconnectWallet(session: WalletSession) {
-  await transact((wallet) => wallet.deauthorize({ auth_token: session.authToken }));
+  await withWallet((wallet) => wallet.deauthorize({ auth_token: session.authToken }));
 }
 
 export async function sendAsset(
@@ -33,7 +33,7 @@ export async function sendAsset(
 ): Promise<PendingPayment> {
   // Sign only: derive and persist the signature BEFORE broadcast, so an RPC timeout
   // or app restart cannot turn a possibly successful transfer into a blind retry.
-  const signed = await transact((wallet) => signAssetTransfer(wallet, session, receiver, amount, updateSession, undefined, asset));
+  const signed = await withWallet((wallet) => signAssetTransfer(wallet, session, receiver, amount, updateSession, undefined, asset));
   return submitSignedPayment(signed, rememberBeforeBroadcast);
 }
 
@@ -47,7 +47,7 @@ export async function createDemoAsset(
   const address = prepared.mint.toBase58();
   if (!prepared.transaction) { await rememberMint(address); return address; }
   const transaction = prepared.transaction;
-  const signed = await transact((wallet) => signDemoCreation(wallet, session, transaction, updateSession));
+  const signed = await withWallet((wallet) => signDemoCreation(wallet, session, transaction, updateSession));
   // Remember the deterministic mint before broadcasting. Retry always targets
   // the same account, so a timeout cannot create a second supply or mint.
   await rememberMint(address);
@@ -64,5 +64,5 @@ export async function createDemoAsset(
 export async function signCheckout(
   session: WalletSession, transaction: Transaction, updateSession: (session: WalletSession) => void,
 ): Promise<Transaction> {
-  return transact((wallet) => signCheckoutTransaction(wallet, session, transaction, updateSession));
+  return withWallet((wallet) => signCheckoutTransaction(wallet, session, transaction, updateSession));
 }

@@ -6,7 +6,8 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "platforms": [
-      "android"
+      "android",
+      "ios"
     ],
     "android": {
       "package": "com.onchainpayments.devnet",
@@ -22,16 +23,27 @@
         "android.permission.WRITE_EXTERNAL_STORAGE"
       ]
     },
+    "ios": {
+      "bundleIdentifier": "com.onchainpayments.devnet",
+      "buildNumber": "1",
+      "supportsTablet": false,
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": ["phantom"]
+      }
+    },
     "scheme": "tappay",
     "plugins": [
       [
         "expo-camera",
         {
           "cameraPermission": "Allow Tap Pay to scan payment QR codes.",
+          "microphonePermission": false,
           "recordAudioAndroid": false,
           "barcodeScannerEnabled": true
         }
-      ]
+      ],
+      "./plugins/withPaymentNfc.cjs",
+      "./plugins/withPhoneTap.cjs"
     ]
   }
 }

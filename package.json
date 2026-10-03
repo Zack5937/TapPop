@@ -6,6 +6,10 @@
   "scripts": {
     "start": "npm run start --workspace apps/mobile",
     "android": "npm run android --workspace apps/mobile",
+    "ios": "npm run ios --workspace apps/mobile",
+    "ios:device": "npm run ios:device --workspace apps/mobile",
+    "prebuild:ios": "npm run prebuild:ios --workspace apps/mobile",
+    "bundle:ios": "npm run bundle:ios --workspace apps/mobile",
     "apk:android": "npm run apk:android --workspace apps/mobile",
     "typecheck": "npm run typecheck --workspace apps/mobile",
     "test": "npm run test --workspace apps/mobile",

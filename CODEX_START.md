@@ -113,30 +113,54 @@ Use generic asset abstractions.
 
 ---
 
-# Current Task — Milestone 3: Basic Receive / Pay
+# Current Task — Milestone 2: Token Red Packet
 
-The user explicitly prioritized basic receive/pay over red packets and requested implementation on 2026-10-03.
+The user's continuation after M5 starts M2 only. The contract stage is implemented:
+equal/lucky packets, SPL Token and the M1 Token-2022 profile, escrow, permanent
+claim PDAs, fresh ORAO VRF reservations, permissionless settlement and expiry/refund.
+Read `docs/MILESTONE_2.md` and `docs/RED_PACKET_RANDOMNESS.md` before continuing.
 
-Implemented in code:
+Local host tests and compiled SBFv0 VM tests pass. SBPFv3 also compiles, but its
+execution is not verified by the pinned Agave 2.3 VM. Real ORAO request/fulfillment
+and deployment remain unverified. The default program ID is deliberately an
+undeployed test identity; never silently enable it in the app.
+
+Android integration is now implemented: asset/mode selection, create/claim/refund
+review, QR sharing, separate oracle/network/rent costs, durable signed-transaction
+recovery and chain-state refresh. Typecheck, 95 JS tests, Rust/mobile ABI comparison
+and Android APK build pass. The APK disables red packet operations when no real
+Devnet program ID is configured; the local-test default is explicitly rejected.
+
+Next work remains **within M2**: deployment identity/target compatibility, actual
+ORAO request/fulfillment and two-wallet Devnet verification. No live program or
+device acceptance is claimed. Do not start a new major milestone.
+
+## Previous M5 status
+
+User explicitly requested phone-to-phone NFC on 2026-10-03. The extension now has
+an Android HCE sender and Reader Mode / ISO-DEP receiver, in addition to static tags.
 
 ```text
-Receive amount + selectable settlement token (default USDC) + QR
-Reusable merchant QR + customer-entered amount + customer Gas fee: 0 SOL
-Native QR scanning / payment deep links + review
-Same-token funding selection; unsupported conversion routes disabled
-Receiver-selected network fee policy (merchant default, payer optional)
-Customer partial-signature QR → merchant wallet co-sign → broadcast
-Onchain settlement verification and local pending recovery
+Sender opens Send to nearby phone (foreground, unlocked, one-minute session)
+Receiver opens Read nearby phone → SELECT + bounded chunks + digest verification
+Same M3/M4 validators → request review or existing signature handoff
+Explicit wallet authorization → existing settlement verification
 ```
 
-See `docs/MILESTONE_3.md` for the exact two-wallet protocol, tests and device acceptance.
-No proprietary payment server or hidden merchant key is used.
+See `docs/MILESTONE_5_PHONE_TAP.md` for implementation, tests, APK and two-device
+acceptance. The sender must support HCE; both phones must open the updated app.
+No new signature or payment is triggered by a tap. Static tags/QR/text remain
+available. No tag writer, payment server or background payment is implemented.
 
-M0 balance loading is user-verified; M0 transfers, M1 asset issuance/transfers and M3 two-device payments still await actual device acceptance. Do not claim these were verified onchain.
+M3 permanent merchant codes and M4's dedicated three-wallet atomic stock-to-USDC
+checkout remain implemented. Generic merchant codes still use same-token payments.
 
-Do not expand this milestone into cross-token conversion, NFC, red packets or NFT.
-The next highest-priority milestone is M4 demo AAPLx-DEMO → USDC settlement, on further user instruction.
-M2 red packets still require creator-selected asset plus NORMAL_EQUAL and LUCKY modes; randomness design remains pending. M5 covers NFC hardware transport.
+M0 balances are user-verified. M0 transfers, M1 issuance/transfers, M3/M4 payments
+and M5 real NFC hardware still await device acceptance. Tests are not onchain or
+radio acceptance. No wallets were operated for this implementation.
+
+Both equal and lucky modes remain required in M2. Do not start NFT or other
+milestones in parallel. Keep M3/M4/M5 recovery and explicit wallet authorization intact.
 
 ---
 

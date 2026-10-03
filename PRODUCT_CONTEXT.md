@@ -88,7 +88,8 @@ These are the foundational flows, ahead of red packets in implementation priorit
 **Receive:** select the token to receive (USDC by default), enter the amount, choose
 who pays network fees (receiver/merchant by default), and show a payment QR code.
 
-**Pay:** scan the QR code or tap via NFC, review the request, select a supported
+**Pay:** scan the QR code or tap via NFC (including two Android phones with the
+app open in Send/Read mode), review the request, select a supported
 funding asset, review any conversion and fee responsibility, and confirm in the wallet.
 
 The receiver can choose RECEIVER or PAYER as the network fee bearer. The default is

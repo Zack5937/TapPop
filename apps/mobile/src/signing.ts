@@ -1,4 +1,4 @@
-import type { Web3MobileWallet } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import type { WalletClient } from './walletClient';
 import { Buffer } from 'buffer';
 import { PublicKey, type Transaction } from '@solana/web3.js';
 import bs58 from 'bs58';
@@ -19,7 +19,7 @@ export function authorizedAddress(address: string): PublicKey {
 }
 
 export async function signAssetTransfer(
-  wallet: Pick<Web3MobileWallet, 'authorize' | 'signTransactions'>,
+  wallet: Pick<WalletClient, 'authorize' | 'signTransactions'>,
   session: WalletSession,
   receiverText: string,
   amountText: string,
@@ -70,7 +70,7 @@ export async function submitSignedPayment(
 }
 
 export async function signDemoCreation(
-  wallet: Pick<Web3MobileWallet, 'authorize' | 'signTransactions'>,
+  wallet: Pick<WalletClient, 'authorize' | 'signTransactions'>,
   session: WalletSession,
   transaction: Transaction,
   updateSession: (session: WalletSession) => void,

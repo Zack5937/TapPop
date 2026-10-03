@@ -659,3 +659,11 @@ Support a reusable merchant receive QR in M3: merchant selects the receiving tok
 each transaction and its network fees; QR discovery never grants that authority.
 New merchant codes have no expiry; each payment has its own nonce, reference and expiry.
 Retain fixed-amount receive requests and their selectable fee policy.
+
+## Phone-to-Phone NFC — User Update 2026-10-03
+
+Phone-to-phone transfer is explicitly required within M5. Use foreground HCE
+sending and NFC Reader Mode receiving, with bounded/cancellable sessions and
+complete-payload validation. Requests and existing signature handoffs may be
+transported; receiving data must never create a new signature or authorize a
+payment. Keep QR/static tags as fallbacks and report hardware acceptance honestly.

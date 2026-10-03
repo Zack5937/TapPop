@@ -286,7 +286,10 @@ random results may occasionally coincide. Do not require unequal outputs as a te
 
 Before lucky-mode implementation, specify and review the randomness source and
 creator/claimant/ordering manipulation risks. Do not use client-selected awards or
-present predictable public inputs as secure randomness. This design is still pending.
+present predictable public inputs as secure randomness. The implementation-stage
+review is recorded in docs/RED_PACKET_RANDOMNESS.md. The contract is implemented
+with local SBF tests; Android integration and APK build are implemented. Deployment,
+real ORAO fulfillment and device acceptance remain pending. See docs/MILESTONE_2.md.
 
 This scope change does not add new currencies, arbitrary mint support, mainnet,
 stock trading, or a centralized payment server.
@@ -336,6 +339,10 @@ and separately assigned rather than silently included in the gas policy.
 
 ## Milestone 4 — Demo Asset Settlement
 
+Implemented in code via a dedicated three-wallet atomic transfer flow, fixed
+DemoQuoteProvider and multi-part QR signing exchange; device acceptance pending.
+See docs/MILESTONE_4.md. M3 generic receive codes do not yet use this route.
+
 Receiver may select supported settlement tokens; the route matrix is explicit.
 Only enable funding/settlement pairs with implemented liquidity and quote validation.
 The first cross-asset route remains the coffee demo below.
@@ -367,6 +374,14 @@ POS confirms onchain receipt.
 ---
 
 ## Milestone 5 — NFC
+
+Implemented in code: optional Android NFC permission/feature, narrow NDEF URI
+filters, tag-link preparation and shared M3/M4 link handlers. Static NDEF tags are
+available as a fallback; writing uses an external tool. User explicitly added
+phone-to-phone on 2026-10-03: foreground HCE send + Reader Mode/ISO-DEP receive,
+including request and existing signature handoff, is implemented in code.
+See docs/MILESTONE_5_PHONE_TAP.md.
+Real hardware acceptance is pending; see docs/MILESTONE_5.md.
 
 If real Android NFC device is available:
 

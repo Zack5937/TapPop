@@ -40,9 +40,16 @@ When starting a new Codex session, tell Codex:
 
 > Read AGENTS.md, PRODUCT_CONTEXT.md, ARCHITECTURE_CONTEXT.md and HACKATHON_SCOPE.md. Then execute only the current milestone in CODEX_START.md. Do not expand scope.
 
+## iOS development
+
+iOS QR payment adaptation uses Phantom on Solana Devnet. See
+[iOS setup](docs/IOS_SETUP.md) for free Apple Account installation, Xcode setup,
+signing/recovery behavior and two-device acceptance. Native compilation and iPhone
+payment acceptance remain pending; a successful JS export is not an installable IPA.
+
 ## Android app — current implementation
 
-Current development milestone: **Milestone 3 — Basic Receive / Pay**, prioritized over red packets by the user. See [Milestone 3](docs/MILESTONE_3.md) for QR receive/pay, reusable merchant codes with customer-entered amounts and 0 SOL customer gas, merchant-paid fees, the two-wallet QR signature exchange and acceptance steps. Code/tests/APK are implemented; real device payment acceptance remains pending. [Milestone 1](docs/MILESTONE_1.md) covers demo asset setup.
+Current development milestone: **Milestone 2 — Token Red Packet**. [M2](docs/MILESTONE_2.md) includes the equal/lucky contract and Android create/claim/refund/recovery UI. The APK builds; deployment, real VRF fulfillment and device acceptance are pending. Red packet operations require a real `EXPO_PUBLIC_RED_PACKET_PROGRAM_ID` and are disabled when unconfigured. See [Phone Tap](docs/MILESTONE_5_PHONE_TAP.md) for HCE/Reader Mode two-device steps. [Static NFC tags](docs/MILESTONE_5.md) remain available. Real NFC and onchain device acceptance remain pending. [Milestone 4](docs/MILESTONE_4.md) covers three-wallet demo settlement, [Milestone 3](docs/MILESTONE_3.md) basic payments/permanent merchant codes, and [Milestone 1](docs/MILESTONE_1.md) demo asset setup.
 
 Requirements: Node.js >= 22.13, Java 17, Android SDK/Android Studio and an Android device/emulator with a compatible Mobile Wallet Adapter wallet.
 
@@ -59,18 +66,20 @@ Set `JAVA_HOME` to Java 17 and `ANDROID_HOME` to your SDK path before building. 
 
 Connect a Devnet wallet with SOL, then choose **Create demo asset in wallet**. Confirm creation, wait for confirmation and refresh the balance. Use the resulting public mint address on the second device with **Load demo asset**, then send 1 AAPLx-DEMO from A to B. Creation and transfers always require the user's wallet signature.
 
-AAPLx-DEMO is a **Devnet demo asset, not backed by real equity, and not official xStocks**. This build supports the immutable Token-2022 Scaled UI Amount ×2 demo profile, plus existing Devnet USDC. It does not implement arbitrary mutable multipliers, stock red packets, settlement or NFC yet. No private keys or wallet tokens are saved by the app.
+AAPLx-DEMO is a **Devnet demo asset, not backed by real equity, and not official xStocks**. This build supports the immutable Token-2022 Scaled UI Amount ×2 demo profile, plus existing Devnet USDC. Arbitrary mutable multipliers remain unsupported. No private keys or wallet tokens are saved by the app.
 
 
 Red packet requirements for Milestone 2 were clarified on 2026-10-03: creators choose
 a supported token and either ordinary/equal or lucky allocation. Stock tokens are
 one selectable asset category. Both modes belong to one generic program; neither
-mode is implemented yet. See HACKATHON_SCOPE.md for the updated acceptance criteria.
+mode is enabled without a deployed program configuration. Contract and Android
+paths are implemented; see [M2](docs/MILESTONE_2.md) and [randomness review](docs/RED_PACKET_RANDOMNESS.md).
 
 
 Basic Receive / Pay takes priority over red packets per the user's 2026-10-03 update.
 Receive selects settlement token (USDC default), amount and network fee payer
 (receiver/merchant default), then displays a QR. Pay scans or taps and selects a
 supported funding token. Merchant-paid fees need the merchant's wallet authorization;
-cross-token payments need an implemented settlement route. M3 implements the same-token QR flow and merchant co-signing; cross-token settlement
-and NFC remain separate milestones. See docs/MILESTONE_3.md and HACKATHON_SCOPE.md.
+cross-token payments need an implemented settlement route. M3 implements the same-token QR flow and merchant co-signing. M4 implements a
+dedicated stock-funded USDC checkout; generic M3 codes still use same-token payment.
+M5 adds phone-to-phone HCE/Reader Mode and static NFC tags; hardware acceptance remains pending. See docs/MILESTONE_3.md, docs/MILESTONE_4.md and HACKATHON_SCOPE.md.

@@ -1,3 +1,6 @@
+import { PhoneTap } from './PhoneTap';
+import { paymentLinkTarget } from '../paymentLinks';
+import { NfcRequest, NfcHint } from './NfcRequest';
 import { merchantCodeExpired, createMerchantCode, createMerchantPayment, decodeMerchantCode, encodeMerchantCode, resolveMerchantPayment, MERCHANT_PREFIX, type MerchantCode } from '../merchantCode';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Linking, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
@@ -150,8 +153,8 @@ export function Checkout({ session, updateSession, externalBlocked, onLockChange
   acceptRef.current = (text) => { void run('Reading payment…', () => acceptPayload(text)); };
   // A deep link transports the same request and only opens review; it never signs.
   useEffect(() => {
-    void Linking.getInitialURL().then((url) => { if (url && mounted.current) setIncomingLink(url); });
-    const listener = Linking.addEventListener('url', ({ url }) => setIncomingLink(url));
+    void Linking.getInitialURL().then((url) => { if (url && paymentLinkTarget(url) === 'checkout' && mounted.current) setIncomingLink(url); });
+    const listener = Linking.addEventListener('url', ({ url }) => { if (paymentLinkTarget(url) === 'checkout') setIncomingLink(url); });
     return () => listener.remove();
   }, []);
   useEffect(() => {
@@ -185,6 +188,7 @@ export function Checkout({ session, updateSession, externalBlocked, onLockChange
       {!record && !review && !merchantReview && <>
         <Button text="Receive" disabled={disabled || !session} onPress={() => setReceiveMode(true)} />
         <Button text="Scan to pay" disabled={disabled || !session} onPress={openScanner} />
+        <NfcHint disabled={disabled} />
         {!session && <Text style={styles.text}>Connect your wallet below to receive or pay.</Text>}
         {receiveMode && <>
           <Text style={styles.text}>Receive token (default USDC)</Text>
@@ -222,6 +226,7 @@ export function Checkout({ session, updateSession, externalBlocked, onLockChange
         <Text selectable style={styles.address}>Token: {record.code.settlementMint}</Text>
         {!merchantCodeExpired(record.code, Math.floor(now / 1000)) ? <>
           <PaymentQr value={encodeMerchantCode(record.code)} />
+          <NfcRequest value={encodeMerchantCode(record.code)} disabled={disabled} />
           <Text selectable style={styles.link}>{encodeMerchantCode(record.code)}</Text>
           <Button text="Scan customer authorization" disabled={disabled || !session} onPress={openScanner} />
         </> : <Text style={styles.text}>Merchant QR expired. Close it and generate a new code.</Text>}
@@ -258,6 +263,7 @@ export function Checkout({ session, updateSession, externalBlocked, onLockChange
       </>}
       {record?.role === 'receive' && !record.pending && settlement === 'pending' && <>
         {!expired ? (!record.merchantCode && <PaymentQr value={encodeRequest(record.intent)} />) : <Text style={styles.text}>Request expired. Previously signed payments may still arrive; check wallet activity before closing.</Text>}
+        {!record.merchantCode && !expired && <NfcRequest value={encodeRequest(record.intent)} disabled={disabled} />}
         {!record.merchantCode && <Text selectable style={styles.link}>{encodeRequest(record.intent)}</Text>}
         {record.intent.networkFeePolicy === 'RECEIVER' && !expired && <>
           <Text style={styles.text}>Ask the customer to scan and confirm, then scan their authorization QR to approve network fees.</Text>
@@ -291,7 +297,7 @@ export function Checkout({ session, updateSession, externalBlocked, onLockChange
       </>}
       {record?.role === 'pay' && !record.pending && settlement === 'pending' && <>
         <Text style={styles.text}>Show this authorization QR to the receiver. Your token transfer is signed; the receiver must approve fees. Keep this payment until its result is known.</Text>
-        <PaymentQr value={encodeOffer(record.offer)} /><Text selectable style={styles.link}>{encodeOffer(record.offer)}</Text>
+        <PhoneTap value={encodeOffer(record.offer)} disabled={disabled} /><PaymentQr value={encodeOffer(record.offer)} /><Text selectable style={styles.link}>{encodeOffer(record.offer)}</Text>
       </>}
       {costs && <Text style={styles.text}>Estimated network fee ({request?.networkFeePolicy === 'RECEIVER' ? 'merchant pays' : 'payer pays'}): {formatUnits(BigInt(costs.networkFee), 9)} SOL{ '\n' }New account rent: {formatUnits(BigInt(costs.accountRent), 9)} SOL</Text>}
       {sponsor && record?.role === 'receive' && !record.pending && <>
@@ -317,6 +323,7 @@ export function Checkout({ session, updateSession, externalBlocked, onLockChange
           && <Button text={settlement === 'pending' ? 'Close expired request' : 'Done'} disabled={disabled} onPress={() => void run('Finishing…', finish)} />}
       </>}
       {(!record || record.role === 'merchant' || (record.role === 'receive' && !record.pending && !expired)) && <>
+        <PhoneTap disabled={disabled || !session} onReadingChange={(reading) => { scanning.current = reading; }} onReceive={(text) => acceptRef.current(text)} />
         <Text style={styles.text}>Testing without a camera: paste the Tap Pay QR text.</Text>
         <TextInput accessibilityLabel="Payment QR text" style={styles.input} value={payload} onChangeText={setPayload} autoCapitalize="none" autoCorrect={false} editable={!disabled} />
         <Button text="Read payment QR text" disabled={disabled || !payload} onPress={() => void run('Reading payment…', () => acceptPayload(payload))} />

@@ -54,7 +54,9 @@ npm test
 
 新增运行依赖：Expo SDK 55 对应的 expo-camera、react-native-svg，以及 qrcode 的纯 JS 核心。安装时 npm 报告 36 个依赖审计告警（12 moderate / 24 high）；没有进行可能改变 Expo/Solana SDK 兼容性的强制升级。这些告警未在本里程碑修复。
 
-## 本轮构建产物
+## M3 历史构建产物
+
+下列校验值记录 M3 当时构建；当前输出 APK 已更新为 M5，最新校验值和测试步骤见 [M5](MILESTONE_5.md)。
 
 Android arm64 release 构建成功（包含商家开放金额收款码），未安装或操作用户钱包。
 

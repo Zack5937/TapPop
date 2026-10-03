@@ -2,7 +2,7 @@ import type { MerchantCode, MerchantPayment } from './merchantCode';
 import { Buffer } from 'buffer';
 import bs58 from 'bs58';
 import { PublicKey, Transaction, TransactionInstruction, type Connection, type BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
-import type { Web3MobileWallet } from '@solana-mobile/mobile-wallet-adapter-protocol-web3js';
+import type { WalletClient } from './walletClient';
 import { ACCOUNT_SIZE, TOKEN_2022_PROGRAM_ID, ExtensionType, getAccountLen, getMint, TokenError } from '@solana/spl-token';
 import { config, registerDemoMint } from './config';
 import { validateDemoMint } from './demoAsset';
@@ -107,7 +107,7 @@ export function decodeOffer(text: string): PaymentOffer {
 }
 
 export async function signCheckoutTransaction(
-  wallet: Pick<Web3MobileWallet, 'authorize' | 'signTransactions'>, session: WalletSession,
+  wallet: Pick<WalletClient, 'authorize' | 'signTransactions'>, session: WalletSession,
   transaction: Transaction, updateSession: (session: WalletSession) => void,
 ): Promise<Transaction> {
   const message = Buffer.from(transaction.serializeMessage());

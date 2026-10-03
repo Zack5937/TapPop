@@ -299,7 +299,20 @@ real DEX
 
 ---
 
-## Demo Settlement Program
+## M4 Implemented Demo Settlement
+
+M4 uses native token transfers in one transaction with three wallet signatures:
+customer transfers AAPLx-DEMO to an independently selected liquidity wallet; that
+wallet transfers USDC to the merchant; merchant signs as fee payer. All funds are
+wallet-controlled and each spend is explicitly approved. DemoQuoteProvider fixes
+the demo rate at 200 USDC per displayed AAPLx-DEMO; exact integer conversion rejects
+rounding. Full transaction-message verification determines settlement, with durable
+partial signatures and split QR transport. No custom program is required for this
+manual demo route. See docs/MILESTONE_4.md.
+
+Generic M3 merchant codes remain same-token only; M4 is a dedicated checkout.
+
+## Possible Future Demo Settlement Program
 
 Possible conceptual state:
 
@@ -371,6 +384,8 @@ Required instructions:
 ```text
 create
 claim
+reserve_lucky
+settle_lucky
 refund
 ```
 
@@ -381,7 +396,7 @@ use the same program; a stock token is not a special red packet implementation.
 - LUCKY: onchain allocation of a positive raw amount; reserve at least one raw unit per remaining claim; the final claim receives the remainder.
 - Both modes: escrow balance conservation, mint/program validation, ClaimRecord PDA and atomic double-claim prevention.
 - Reject zero recipients, zero amounts, or a total smaller than the minimum needed for all claims.
-- The client cannot set the awarded amount or act as the randomness authority. The randomness mechanism and manipulation assumptions must be specified and reviewed before implementation; it remains an open design item, not an implemented capability.
+- The client cannot set the awarded amount or act as the randomness authority. M2's contract uses a fresh ORAO Classic VRF v2 request, a permanent reservation and permissionless fixed-recipient settlement. See docs/RED_PACKET_RANDOMNESS.md for the implementation-stage threat review. Local SBF tests pass. Android create/claim/refund/recovery code is implemented, with an explicit deployed-program gate; real ORAO CPI/fulfillment, deployment and device acceptance remain pending (docs/MILESTONE_2.md).
 - Keep token quantities in integer raw units, applying Scaled UI Amount only for user input/display.
 
 Do not hardcode USDC or AAPLx-DEMO. Initial selectable assets are the existing supported assets; generic program state does not imply support for every Token-2022 extension.
@@ -389,6 +404,21 @@ Do not hardcode USDC or AAPLx-DEMO. Initial selectable assets are the existing s
 ---
 
 ## NFC Architecture
+
+User-authorized phone-to-phone extension: Kotlin HCE service (CATEGORY_OTHER,
+BIND_NFC_SERVICE, foreground-only in-memory offer) + ISO-DEP Reader Mode bridge.
+A one-minute session transfers up to 7,000 UTF-8 bytes in 220-byte APDU reads;
+length/digest/snapshot checks reject mixed or incomplete transfers. Native lifecycle
+cleanup stops sharing and reads on background/cancel/timeout. Both request discovery
+and existing signed handoffs reuse original M3/M4 validation and confirmation.
+Details and pending hardware checks: docs/MILESTONE_5_PHONE_TAP.md.
+
+M5 implementation: Android NDEF URI dispatch → React Native Linking (cold/warm)
+→ paymentLinkTarget → existing M3/M4 validation and review. Expo prebuild plugin
+preserves three narrow tappay hosts (pay/merchant/settle) and optional NFC hardware.
+Tag-link preparation exports unsigned requests only; external tools write tags.
+Discovery never invokes signing. Static merchant tags have no expiry; fixed-amount
+and M4 requests retain their original expiry. See docs/MILESTONE_5.md.
 
 ```text
 Merchant POS

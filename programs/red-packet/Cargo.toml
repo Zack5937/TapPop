@@ -1,0 +1,30 @@
+[package]
+name = "tap-pay-red-packet"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "tap_pay_red_packet"
+
+[features]
+default = []
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+no-idl = []
+no-log-ix-name = []
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build", "orao-solana-vrf/idl-build"]
+
+[dependencies]
+solana-sha256-hasher = { version = "2.2.1", features = ["sha2"] }
+anchor-lang = { version = "=0.32.1", features = ["init-if-needed"] }
+anchor-spl = { version = "=0.32.1", default-features = false, features = ["associated_token", "token", "token_2022", "token_2022_extensions"] }
+orao-solana-vrf = { version = "=0.7.0", default-features = false, features = ["cpi"] }
+
+[dev-dependencies]
+serde_json = "1.0"
+litesvm = "=0.7.1"
+solana-sdk = "=2.3.1"
