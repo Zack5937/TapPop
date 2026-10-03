@@ -1,0 +1,40 @@
+{
+  "name": "@onchain-payments/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "apk:android": "expo prebuild --platform android --no-install && cd android && NODE_ENV=production ./gradlew :app:assembleRelease -PreactNativeArchitectures=arm64-v8a --max-workers=4 -Dorg.gradle.jvmargs='-Xmx3g -XX:MaxMetaspaceSize=1g' --console=plain",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test tests/*.test.ts",
+    "bundle:android": "expo export --platform android"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
+    "@solana-mobile/mobile-wallet-adapter-protocol": "2.3.0",
+    "@solana-mobile/mobile-wallet-adapter-protocol-web3js": "2.3.0",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
+    "bs58": "^6.0.0",
+    "buffer": "^6.0.3",
+    "expo": "~55.0.31",
+    "expo-camera": "~55.0.23",
+    "expo-dev-client": "~55.0.0",
+    "expo-system-ui": "~55.0.22",
+    "qrcode": "^1.5.4",
+    "react": "19.2.0",
+    "react-native": "0.83.10",
+    "react-native-get-random-values": "^1.11.0",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-svg": "^15.15.3",
+    "react-native-url-polyfill": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "~19.2.0",
+    "tsx": "^4.21.0",
+    "typescript": "~5.9.2"
+  }
+}

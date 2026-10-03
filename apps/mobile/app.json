@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "Tap Pay Devnet",
+    "slug": "onchain-payments",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": [
+      "android"
+    ],
+    "android": {
+      "package": "com.onchainpayments.devnet",
+      "versionCode": 1,
+      "allowBackup": false,
+      "permissions": [
+        "android.permission.INTERNET"
+      ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "scheme": "tappay",
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Tap Pay to scan payment QR codes.",
+          "recordAudioAndroid": false,
+          "barcodeScannerEnabled": true
+        }
+      ]
+    ]
+  }
+}
